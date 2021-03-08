@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>Udemy Introdução ao Vue JS</title>
+</head>
+
+<body>
+    <div id="app" class="form-group">
+
+        <hr>
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">CEP</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Cep" aria-describedby="inputGroup-sizing-sm"
+                v-model="cep" maxlength="8" v-focus>
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary" v-on:click="consulta_cep"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-search" viewBox="0 0 16 16">
+                        <path
+                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                    </svg> Pesquisar</button>
+            </div>
+        </div>
+        <hr>
+
+
+        <div v-if="cep_data != null">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="2" scope="col">{{ cep_data.localidade }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in cep_keys">
+                        <td>{{ item }}</td>
+                        <td>{{ cep_data[item] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    // atributo el -> abreviação de elemento
+    let app = new Vue({
+        el: "#app",
+        data: {
+            cep: '',
+            cep_data: null,
+            cep_keys: []
+        },
+        methods: {
+            consulta_cep() {
+                //vai passar o escopo do Vue
+                var self = this;
+
+                // Make a request for a user with a given ID
+                axios.get('http://viacep.com.br/ws/' + this.cep + '/json/')
+                    .then(function (response) {
+                        // handle success
+                        console.log(response);
+                        self.cep_data = response.data;
+
+                        self.cep_keys = Object.keys(self.cep_data)
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function () {
+                        // always executed
+                    });
+            }
+        }
+    });
+</script>
+
+</html>
